@@ -1,46 +1,103 @@
 variable "type" {
-  type = string
-  default = null
+  type        = string
+  default     = null
   description = "ecs"
 }
 
 variable "vpc_id" {
-  default = null
+  default     = null
   description = "a deployed vpc id"
 }
 
-variable "ecs_cluster_id" {
-  default = null
+variable "cluster_id" {
+  default     = null
   description = "targeted ecs cluster id"
 }
 
 variable "subnet_ids" {
-  type = list(string)
-  default = null
+  type        = list(string)
+  default     = null
   description = "a deployed subnet ids, it must be attached vpc_id"
 }
 
 variable "security_group_ids" {
-  type = list(strings)
-  default = null
+  type        = list(string)
+  default     = null
   description = "attached security_group at querypie proxy"
 }
 
 # ============
 variable "cpu" {
-  type = number
+  type        = number
   description = "container limitation of cpu"
-  default = 2
+  default     = 2048
 }
 
 variable "memory" {
-  type = number
-  description = "container limittation of memory"
-  default = 4096
+  type        = number
+  description = "container limitation of memory"
+  default     = 4096
 }
 
-variable "middleware_version" {
-  type = string
+variable "api_url" {
+  type    = string
   default = null
-  description = ""
+  validation {
+    condition     = var.api_url != null
+    error_message = "Make sure your input value, the conditions satisfied."
+  }
+}
+
+variable "application_credentials" {
+  type        = string
+  default     = null
+  description = "querypie application credentials"
+  validation {
+    condition     = var.application_credentials != null
+    error_message = "Make sure your input value, the conditions satisfied."
+  }
+}
+
+variable "image" {
+  type        = string
+  default     = "dockerpie.querypie.com/chequer.io/querypie-app:latest"
+  description = "querypie middleware container image"
+}
+
+variable "nginx_image" {
+  type        = string
+  default     = "dockerpie.querypie.com/chequer.io/nginx:1.19.8-ecs"
+  description = "querypie middleware container image"
+}
+
+variable "image_pull_secret_arn" {
+  type    = string
+  default = null
+  validation {
+    condition     = var.image_pull_secret_arn != null
+    error_message = "Make sure your input value, the conditions satisfied."
+  }
+}
+
+variable "task_execute_role_arn" {
+  type    = string
+  default = null
+  validation {
+    condition     = var.task_execute_role_arn != null
+    error_message = "Make sure your input value, the conditions satisfied."
+  }
+}
+
+variable "port" {
+  type    = number
+  default = 3000
+}
+
+variable "redis_host" {
+  type    = string
+  default = null
+  validation {
+    condition     = var.redis_host != null
+    error_message = "Make sure your input value, the conditions satisfied."
+  }
 }

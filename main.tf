@@ -1,45 +1,43 @@
 locals {
-  name           = "middleware"
-  ecs_cluster_id = var.ecs_cluster_id
-  cpu            = var.cpu
-  memory         = var.memory
-
-  url        = "dockerpie.querypie.com"
-  repository = "chequer.io/nginx"
-  nginx_tag        = "1.19.8-ecs"
-  app_tag = format("querypie-app:%s", var.middleware_version)
+  type                    = var.type
+  vpc_id                  = var.vpc_id
+  subnet_ids              = compact(var.subnet_ids)
+  security_group_ids      = compact(var.security_group_ids)
+  api_url                 = var.api_url
+  cpu                     = var.cpu
+  memory                  = var.memory
+  port                    = var.port
+  cluster_id              = var.cluster_id
+  task_execute_role_arn   = var.task_execute_role_arn
+  image_pull_secret_arn   = var.image_pull_secret_arn
+  application_credentials = var.application_credentials
+  image                   = var.image
+  nginx_image             = var.nginx_image
+  redis_host              = var.redis_host
 }
 
-resource "aws_ecs_task_definition" "this" {
-  container_definitions = jsonencode(
-    [
-      {
-        name      = "nginx"
-        image     = format("%s/%s/%s", local.url, local.repository, local.nginx_tag)
-        cpu       = local.cpu
-        memory    = local.memory
-        essential = true
-      },
-      {
-        name   = "middleware"
-        image  = format("%s/%s/%s", local.url, local.repository, local.nginx_tag)
-        cpu       = local.cpu
-        memory    = local.memory
-        secrets = [{
-          name      = "redis_password",
-          valueFrom = "arn:aws:secretsmanager:region:aws_account_id:secret:appauthexample-AbCdEf:{}::"
-        }]
-        environment = [
-          { name = url, value = 2 },
-        ]
-      }
-    ]
-  )
-  family = "middleware"
+module "ecs" {
+  source             = "./modules/ecs"
+  vpc_id             = local.vpc_id
+  security_group_ids = local.security_group_ids
+  subnet_ids         = local.subnet_ids
+  count              = local.type == "ecs" ? 1 : 0
+
+  api_url                 = local.api_url
+  cluster_id              = local.cluster_id
+  port                    = local.port
+  task_execute_role_arn   = local.task_execute_role_arn
+  image_pull_secret_arn   = local.image_pull_secret_arn
+  application_credentials = local.application_credentials
+  image                   = local.image
+  nginx_image             = local.nginx_image
+  redis_host              = local.redis_host
 }
 
-resource "aws_ecs_service" "this" {
-  name = local.name
-
-  cluster = local.ecs_cluster_id
+module "ec2" {
+  source             = "./modules/ec2"
+  vpc_id             = local.vpc_id
+  security_group_ids = var.security_group_ids
+  subnet_ids         = local.subnet_ids
+  count              = local.type == "ec2" ? 1 : 0
 }
