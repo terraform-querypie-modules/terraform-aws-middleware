@@ -4,7 +4,7 @@ variable "image" {
   description = "querypie image tag"
 }
 
-variable "nginx_image" {
+variable "proxy_image" {
   type        = string
   default     = "dockerpie.querypie.com/chequer.io/nginx:1.19.8-ecs"
   description = "querypie nginx container image"
@@ -20,11 +20,11 @@ variable "redis_host" {
 }
 
 variable "application_credentials" {
-  type = string
-  default = null
+  type        = string
+  default     = null
   description = "querypie application session"
   validation {
-    condition = var.application_credentials != null
+    condition     = var.application_credentials != null
     error_message = "Make sure your input value, the conditions satisfied."
   }
 }
@@ -50,13 +50,13 @@ variable "api_url" {
   type    = string
   default = null
   validation {
-    condition     =  var.api_url != null
+    condition     = var.api_url != null
     error_message = "Make sure your input value, the conditions satisfied."
   }
 }
 
 variable "task_execute_role_arn" {
-  type = string
+  type    = string
   default = null
   validation {
     condition     = var.task_execute_role_arn != null
@@ -65,12 +65,18 @@ variable "task_execute_role_arn" {
 }
 
 variable "image_pull_secret_arn" {
-  type = string
-  default =  null
+  type    = string
+  default = null
   validation {
-    condition = var.image_pull_secret_arn != null
+    condition     = var.image_pull_secret_arn != null
     error_message = "Make sure your input value, the conditions satisfied."
   }
+}
+
+variable "log_group_name" {
+  type        = string
+  default     = null
+  description = "logging"
 }
 
 variable "cluster_id" {

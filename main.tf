@@ -12,8 +12,9 @@ locals {
   image_pull_secret_arn   = var.image_pull_secret_arn
   application_credentials = var.application_credentials
   image                   = var.image
-  nginx_image             = var.nginx_image
+  proxy_image             = var.proxy_image
   redis_host              = var.redis_host
+  log_group_name          = var.log_group_name
 }
 
 module "ecs" {
@@ -30,8 +31,9 @@ module "ecs" {
   image_pull_secret_arn   = local.image_pull_secret_arn
   application_credentials = local.application_credentials
   image                   = local.image
-  nginx_image             = local.nginx_image
+  proxy_image             = local.proxy_image
   redis_host              = local.redis_host
+  log_group_name          = local.log_group_name
 }
 
 module "ec2" {

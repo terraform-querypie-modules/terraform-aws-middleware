@@ -64,7 +64,7 @@ variable "image" {
   description = "querypie middleware container image"
 }
 
-variable "nginx_image" {
+variable "proxy_image" {
   type        = string
   default     = "dockerpie.querypie.com/chequer.io/nginx:1.19.8-ecs"
   description = "querypie middleware container image"
@@ -100,4 +100,20 @@ variable "redis_host" {
     condition     = var.redis_host != null
     error_message = "Make sure your input value, the conditions satisfied."
   }
+}
+
+variable "use_autoscaling" {
+  type    = bool
+  default = false
+}
+
+variable "use_load_balancing" {
+  type    = bool
+  default = false
+}
+
+variable "log_group_name" {
+  type        = string
+  default     = null
+  description = "logging"
 }
